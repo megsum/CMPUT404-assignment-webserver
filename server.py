@@ -1,5 +1,6 @@
 #  coding: utf-8 
 import SocketServer
+import mimetypes
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
@@ -33,10 +34,29 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         self.data = self.request.recv(1024).strip()
         print ("Got a request of: %s\n" % self.data)
 	self.parse_data(self.data)
-        self.request.sendall("OK")
+		
+	#https://docs.python.org/2/tutorial/inputoutput.html
+	#Displays the webpage
+    def show_page(self):
+        url = self.path
+	if url == "index.html" or url == "":
+	   f = open("www/index.html")
+	   self.request.sendall(f.read())
+	   #self.request.sendall(url)
+	   f.close
+	elif url == "base.css":
+           f = open("www" + url)
+	   self.request.sendall(f.read())
+	   #self.request.sendall(url)
+	   f.close
+	else:
+	   self.throw_error()
+
+    def throw_error(self):
+      	self.request.sendall("Error 404: Page not found")
 	
-    #from sberry at http://stackoverflow.com/questions/18563664/socketserver-python
-    #parses data to get separate headers
+	#from sberry at http://stackoverflow.com/questions/18563664/socketserver-python
+	#parses data to get separate headers
     def parse_data(self,data):
     	headers = {}
 	lines = data.splitlines()
@@ -55,7 +75,8 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         self.method = method
         self.headers = headers
         self.body = body
-	print self.headers.get('Referer')
+	print(self.path)
+	self.show_page()
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080  
