@@ -35,17 +35,20 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         print ("Got a request of: %s\n" % self.data)
 	self.parse_data(self.data)
 		
-	#https://docs.python.org/2/tutorial/inputoutput.html
-	#Displays the webpage
+    #https://docs.python.org/2/tutorial/inputoutput.html
+    #Displays the webpage
     def show_page(self):
         url = self.path
-	if url == "index.html" or url == "":
-	   f = open("www/index.html")
+        url_end = url.split("/")
+	url_type = mimetypes.guess_type(url)[0]
+        print url_end
+	if url_end[len(url_end) - 1] == "" or url == "index":
+           f = open("www/" + url + "index.html")
 	   self.request.sendall(f.read())
 	   #self.request.sendall(url)
 	   f.close
-	elif url == "base.css":
-           f = open("www" + url)
+	elif url_type == "text/css" or url_type == "text/html":
+           f = open("www/" + url)
 	   self.request.sendall(f.read())
 	   #self.request.sendall(url)
 	   f.close
@@ -55,8 +58,8 @@ class MyWebServer(SocketServer.BaseRequestHandler):
     def throw_error(self):
       	self.request.sendall("Error 404: Page not found")
 	
-	#from sberry at http://stackoverflow.com/questions/18563664/socketserver-python
-	#parses data to get separate headers
+    #from sberry at http://stackoverflow.com/questions/18563664/socketserver-python
+    #parses data to get separate headers
     def parse_data(self,data):
     	headers = {}
 	lines = data.splitlines()
