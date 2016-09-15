@@ -31,32 +31,51 @@ import mimetypes
 class MyWebServer(SocketServer.BaseRequestHandler):
     
     def handle(self):
+        self.success = True
         self.data = self.request.recv(1024).strip()
         print ("Got a request of: %s\n" % self.data)
 	self.parse_data(self.data)
+
+        self.show_page()
+        if self.success:
+            self.request.sendall("HTTP/1.1 200 OK\r\n")
+	    self.request.sendall("Content-Type: "+self.url_type+"\r\n")
+	    self.request.sendall("Content-Length: "+ str(len(self.file_content))+"\r\n\r\n")
 		
     #https://docs.python.org/2/tutorial/inputoutput.html
     #Displays the webpage
     def show_page(self):
         url = self.path
-        url_end = url.split("/")
-	url_type = mimetypes.guess_type(url)[0]
-        print url_end
-	if url_end[len(url_end) - 1] == "" or url == "index":
-           f = open("www/" + url + "index.html")
-	   self.request.sendall(f.read())
-	   #self.request.sendall(url)
+        url_split = url.split("/")
+	url_type = mimetypes.guess_type(url)[0] 
+        file_content = ""
+        self.file_content = file_content
+        self.url_type = url_type
+	if url_split[-1] == "":
+           f = open("www/" + url + "index.html","r")
+           self.file_content = f.read()
+	   self.request.sendall(self.file_content)
 	   f.close
-	elif url_type == "text/css" or url_type == "text/html":
-           f = open("www/" + url)
-	   self.request.sendall(f.read())
-	   #self.request.sendall(url)
+        elif url_split[-1] == "index":
+           f = open("www/" + url + ".html","r")
+           self.file_content = f.read()
+	   self.request.sendall(self.file_content)
 	   f.close
-	else:
+        elif url_type == "text/css" or url_type == "text/html":
+           try:
+               f = open("www/" + url, "r")
+               self.file_content = f.read()
+               self.request.sendall(self.file_content)
+               f.close
+           except:
+               self.throw_error()
+     	else:
 	   self.throw_error()
+           self.success = False
 
     def throw_error(self):
-      	self.request.sendall("Error 404: Page not found")
+        response_content = "HTTP/1.1 404 NOT FOUND\r\n\r\>"
+	self.request.sendall(response_content)	
 	
     #from sberry at http://stackoverflow.com/questions/18563664/socketserver-python
     #parses data to get separate headers
@@ -78,8 +97,7 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         self.method = method
         self.headers = headers
         self.body = body
-	print(self.path)
-	self.show_page()
+	print(headers)
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080  
