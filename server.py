@@ -1,4 +1,4 @@
-#  coding: utf-8 
+# coding: utf-8 
 import SocketServer
 import mimetypes
 
@@ -36,7 +36,8 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         print ("Got a request of: %s\n" % self.data)
 	self.parse_data(self.data)
 
-        self.show_page()
+        self.get_page_info()
+        #shows the webpage if it exists
         if self.success:
             self.request.sendall("HTTP/1.1 200 OK\r\n")
 	    self.request.sendall("Content-Type: "+str(self.url_type)+"\r\n")
@@ -45,23 +46,32 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 		
     #https://docs.python.org/2/tutorial/inputoutput.html
     #Displays the webpage
-    def show_page(self):
+    def get_page_info(self):
+    	#gets the url of the requested page
         url = self.path
         url_split = url.split("/")
+	
+	#gets the mimetype of the url
 	url_type = mimetypes.guess_type(url)[0] 
         file_content = ""
         self.file_content = file_content
         self.url_type = url_type
+
+        #redirect to index.html if not specified
 	if url_split[-1] == "":
            self.url_type = "text/html"
            f = open("www/" + url + "/index.html","r")
            self.file_content = f.read()
 	   f.close
+
+        #redirects to index.html if index specified
         elif url_split[-1] == "index":
            self.url_type = "text/html"
            f = open("www/" + url + ".html","r")
            self.file_content = f.read()
 	   f.close
+
+        #opens file content
         elif url_type == "text/css" or url_type == "text/html":
            try:
                f = open("www/" + url, "r")
@@ -73,6 +83,7 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 	   self.throw_error()
            self.success = False
 
+    #Gives 404 error when page not found
     def throw_error(self):
         response_content = "HTTP/1.1 404 NOT FOUND\r\n\r\n <html><body><h1>404 File Not Found</h1></body><html>"
 	self.request.sendall(response_content)	
@@ -94,10 +105,8 @@ class MyWebServer(SocketServer.BaseRequestHandler):
                 headers[k.strip()] = v.strip()
         method, path, _ = lines[0].split()
         self.path = path.lstrip("/")
-        self.method = method
         self.headers = headers
         self.body = body
-	print(headers)
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080  
