@@ -39,8 +39,9 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         self.show_page()
         if self.success:
             self.request.sendall("HTTP/1.1 200 OK\r\n")
-	    self.request.sendall("Content-Type: "+self.url_type+"\r\n")
+	    self.request.sendall("Content-Type: "+str(self.url_type)+"\r\n")
 	    self.request.sendall("Content-Length: "+ str(len(self.file_content))+"\r\n\r\n")
+            self.request.sendall(self.file_content)
 		
     #https://docs.python.org/2/tutorial/inputoutput.html
     #Displays the webpage
@@ -52,20 +53,19 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         self.file_content = file_content
         self.url_type = url_type
 	if url_split[-1] == "":
-           f = open("www/" + url + "index.html","r")
+           self.url_type = "text/html"
+           f = open("www/" + url + "/index.html","r")
            self.file_content = f.read()
-	   self.request.sendall(self.file_content)
 	   f.close
         elif url_split[-1] == "index":
+           self.url_type = "text/html"
            f = open("www/" + url + ".html","r")
            self.file_content = f.read()
-	   self.request.sendall(self.file_content)
 	   f.close
         elif url_type == "text/css" or url_type == "text/html":
            try:
                f = open("www/" + url, "r")
                self.file_content = f.read()
-               self.request.sendall(self.file_content)
                f.close
            except:
                self.throw_error()
@@ -74,7 +74,7 @@ class MyWebServer(SocketServer.BaseRequestHandler):
            self.success = False
 
     def throw_error(self):
-        response_content = "HTTP/1.1 404 NOT FOUND\r\n\r\>"
+        response_content = "HTTP/1.1 404 NOT FOUND\r\n\r\n <html><body><h1>404 File Not Found</h1></body><html>"
 	self.request.sendall(response_content)	
 	
     #from sberry at http://stackoverflow.com/questions/18563664/socketserver-python
