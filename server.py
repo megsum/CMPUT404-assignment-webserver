@@ -56,7 +56,9 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         file_content = ""
         self.file_content = file_content
         self.url_type = url_type
-
+        print url_split
+        print self.url_type
+            
         #redirect to index.html if not specified
 	if url_split[-1] == "":
            self.url_type = "text/html"
@@ -71,8 +73,8 @@ class MyWebServer(SocketServer.BaseRequestHandler):
            self.file_content = f.read()
 	   f.close
 
-        #opens file content
-        elif url_type == "text/css" or url_type == "text/html":
+        #opens specified file content
+        elif self.url_type == "text/css" or self.url_type == "text/html":
            try:
                f = open("www/" + url, "r")
                self.file_content = f.read()
@@ -82,6 +84,7 @@ class MyWebServer(SocketServer.BaseRequestHandler):
      	else:
 	   self.throw_error()
            self.success = False
+        print self.url_type
 
     #Gives 404 error when page not found
     def throw_error(self):
