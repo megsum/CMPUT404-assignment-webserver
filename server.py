@@ -37,6 +37,8 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 	self.parse_data(self.data)
 
         self.get_page_info()
+        
+        #from github.com/vanbelle 09/15/2016
         #shows the webpage if it exists
         if self.success:
             self.request.sendall("HTTP/1.1 200 OK\r\n")
@@ -44,7 +46,7 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 	    self.request.sendall("Content-Length: "+ str(len(self.file_content))+"\r\n\r\n")
             self.request.sendall(self.file_content)
 		
-    #https://docs.python.org/2/tutorial/inputoutput.html
+    #https://docs.python.org/2/tutorial/inputoutput.html 09/15/2016
     #Displays the webpage
     def get_page_info(self):
     	#gets the url of the requested page
@@ -91,7 +93,7 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         response_content = "HTTP/1.1 404 NOT FOUND\r\n\r\n <html><body><h1>404 File Not Found</h1></body><html>"
 	self.request.sendall(response_content)	
 	
-    #from sberry at http://stackoverflow.com/questions/18563664/socketserver-python
+    #from sberry at http://stackoverflow.com/questions/18563664/socketserver-python 09/15/2016
     #parses data to get separate headers
     def parse_data(self,data):
     	headers = {}
