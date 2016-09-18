@@ -26,6 +26,7 @@ import mimetypes
 #
 # Resources:
 #  Skeleton code by: Abram Hindle https://github.com/abramhindle/CMPUT404-assignment-webserver
+#  Collaborated with Leah Olexson
 #  Sarah Van Belleghem github.com/vanbelle 09/15/2016
 #  sberry http://stackoverflow.com/questions/18563664/socketserver-python 09/15/2016
 #  https://docs.python.org/2/tutorial/inputoutput.html 09/15/2016
