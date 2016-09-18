@@ -2,6 +2,9 @@
 import SocketServer
 import mimetypes
 
+#This program is a partially HTTP 1.1 compliant webserver.
+  
+# Copyright 2016 Megan Sumner
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +24,12 @@ import mimetypes
 # some of the code is Copyright © 2001-2013 Python Software
 # Foundation; All Rights Reserved
 #
-# http://docs.python.org/2/library/socketserver.html
+# Resources:
+#  Skeleton code by: Abram Hindle https://github.com/abramhindle/CMPUT404-assignment-webserver
+#  Sarah Van Belleghem github.com/vanbelle 09/15/2016
+#  sberry http://stackoverflow.com/questions/18563664/socketserver-python 09/15/2016
+#  https://docs.python.org/2/tutorial/inputoutput.html 09/15/2016
+#  http://docs.python.org/2/library/socketserver.html 09/15/2016
 #
 # run: python freetests.py
 
