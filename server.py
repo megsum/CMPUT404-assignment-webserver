@@ -67,8 +67,6 @@ class MyWebServer(SocketServer.BaseRequestHandler):
         file_content = ""
         self.file_content = file_content
         self.url_type = url_type
-        print url_split
-        print self.url_type
             
         #redirect to index.html if not specified
 	if url_split[-1] == "":
@@ -95,7 +93,6 @@ class MyWebServer(SocketServer.BaseRequestHandler):
      	else:
 	   self.throw_error()
            self.success = False
-        print self.url_type
 
     #Gives 404 error when page not found
     def throw_error(self):
